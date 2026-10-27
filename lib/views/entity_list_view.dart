@@ -35,7 +35,7 @@ class _EntityListViewState extends State<EntityListView> {
 
   Future<void> _load() async {
     setState(() => _state = ViewState.loading);
-    try {
+        try {
       final data = await _service.getList<ApiEntity>(
         widget.endpoint.path,
         widget.endpoint.fromJson,
