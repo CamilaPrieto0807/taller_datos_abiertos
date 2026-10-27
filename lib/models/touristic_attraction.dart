@@ -10,6 +10,7 @@ class TouristicAttraction implements ApiEntity {
   final double? latitude;
   final double? longitude;
   final String? cityName;
+  final int? departmentId;
 
   TouristicAttraction({
     required this.id,
@@ -19,10 +20,12 @@ class TouristicAttraction implements ApiEntity {
     this.latitude,
     this.longitude,
     this.cityName,
+    this.departmentId,
   });
 
   factory TouristicAttraction.fromJson(Map<String, dynamic> json) {
     final rawName = (json['name'] ?? 'Sin nombre').toString().trim();
+    final city = json['city'] as Map<String, dynamic>?;
     return TouristicAttraction(
       id: json['id'] ?? 0,
       name: rawName.isEmpty
@@ -38,7 +41,8 @@ class TouristicAttraction implements ApiEntity {
           [],
       latitude: double.tryParse('${json['latitude']}'),
       longitude: double.tryParse('${json['longitude']}'),
-      cityName: (json['city'] as Map<String, dynamic>?)?['name'],
+      cityName: city?['name']?.toString(),
+      departmentId: (city?['departmentId'] as num?)?.toInt(),
     );
   }
 
@@ -50,7 +54,12 @@ class TouristicAttraction implements ApiEntity {
         'images': images,
         'latitude': latitude,
         'longitude': longitude,
-        'city': cityName == null ? null : {'name': cityName},
+        'city': cityName == null && departmentId == null
+            ? null
+            : {
+                if (cityName != null) 'name': cityName,
+                if (departmentId != null) 'departmentId': departmentId,
+              },
       };
 
   @override

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../config/endpoints.dart';
 import '../models/api_entity.dart';
+import '../models/department.dart';
+import '../models/touristic_attraction.dart';
 import '../services/api_colombia_service.dart';
 import '../widgets/entity_image.dart';
 import '../widgets/error_view.dart';
@@ -22,6 +24,7 @@ class _EntityListViewState extends State<EntityListView> {
   final _service = ApiColombiaService();
   ViewState _state = ViewState.loading;
   List<ApiEntity> _items = [];
+  Map<int, String> _departmentImages = {};
   String _error = '';
 
   @override
@@ -37,12 +40,33 @@ class _EntityListViewState extends State<EntityListView> {
         widget.endpoint.path,
         widget.endpoint.fromJson,
       );
+      final departmentImages = <int, String>{};
+      if (widget.endpoint.path == 'Department') {
+        try {
+          final attractions = await _service.getList<TouristicAttraction>(
+            'TouristicAttraction',
+            TouristicAttraction.fromJson,
+          );
+          for (final attraction in attractions) {
+            final departmentId = attraction.departmentId;
+            final imageUrl = attraction.imageUrl;
+            if (departmentId != null && imageUrl != null) {
+              departmentImages.putIfAbsent(departmentId, () => imageUrl);
+            }
+          }
+        } on ApiException catch (e) {
+          debugPrint(
+            'No se pudieron cargar fotos de departamentos: ${e.message}',
+          );
+        }
+      }
       if (widget.endpoint.sortByTitle) {
         data.sort((a, b) => a.title.compareTo(b.title));
       }
       if (!mounted) return;
       setState(() {
         _items = data;
+        _departmentImages = departmentImages;
         _state = ViewState.success;
       });
     } on ApiException catch (e) {
@@ -75,11 +99,14 @@ class _EntityListViewState extends State<EntityListView> {
                     itemCount: _items.length,
                     itemBuilder: (_, i) {
                       final item = _items[i];
+                      final imageUrl = item is Department
+                          ? _departmentImages[item.id]
+                          : item.imageUrl;
                       return Card(
                         child: ListTile(
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: EntityImage(url: item.imageUrl),
+                            child: EntityImage(url: imageUrl),
                           ),
                           title: Text(item.title),
                           subtitle: item.subtitle == null

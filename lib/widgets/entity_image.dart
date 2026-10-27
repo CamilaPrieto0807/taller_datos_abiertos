@@ -20,7 +20,8 @@ class EntityImage extends StatelessWidget {
       width: size,
       height: height ?? size,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => placeholder,
+      webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+      errorBuilder: (_, _, _) => placeholder,
       loadingBuilder: (_, child, progress) => progress == null
           ? child
           : SizedBox(

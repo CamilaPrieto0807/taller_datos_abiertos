@@ -12,11 +12,11 @@ class DashboardView extends StatelessWidget {
         appBar: AppBar(title: const Text('Datos Abiertos de Colombia')),
         body: GridView.builder(
           padding: const EdgeInsets.all(16),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 220,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.9,
+            childAspectRatio: 0.95,
           ),
           itemCount: endpoints.length,
           itemBuilder: (_, i) => EndpointCard(
