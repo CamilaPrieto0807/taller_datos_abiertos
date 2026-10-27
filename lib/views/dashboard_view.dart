@@ -10,20 +10,30 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text('Datos Abiertos de Colombia')),
-        body: GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 220,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.95,
-          ),
-          itemCount: endpoints.length,
-          itemBuilder: (_, i) => EndpointCard(
-            endpoint: endpoints[i],
-            onTap: () => context.pushNamed(
-              'list',
-              pathParameters: {'endpoint': endpoints[i].key},
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 820),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 600;
+                return GridView.builder(
+                  padding: EdgeInsets.all(wide ? 24 : 16),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: wide ? 20 : 12,
+                    mainAxisSpacing: wide ? 20 : 12,
+                    childAspectRatio: wide ? 1.1 : 0.9,
+                  ),
+                  itemCount: endpoints.length,
+                  itemBuilder: (_, i) => EndpointCard(
+                    endpoint: endpoints[i],
+                    onTap: () => context.pushNamed(
+                      'list',
+                      pathParameters: {'endpoint': endpoints[i].key},
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
