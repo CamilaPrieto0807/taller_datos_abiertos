@@ -9,7 +9,7 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Datos Abiertos de Colombia')),
+        appBar: AppBar(title: const Text('Datos Abiertos de Colombia v1.0.1')),
         body: GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
